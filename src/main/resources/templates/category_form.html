@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head th:replace="fragments :: page_head('[[${pageTitle}]]')">
+
+</head>
+
+<body>
+<div class="container-fluid" >
+  <div th:replace="navigation :: menu"></div>
+  <div class="text-center">
+    <h2>Управление категориями | [[${pageTitle}]]</h2>
+  </div>
+</div>
+<form th:action="@{/categories/save}" enctype="multipart/form-data" method="post" style="max-width:500px; margin: 0 auto"
+      th:object="${category}" onsubmit="return checkUnique(this);">
+  <input type="hidden" th:field="*{id}">
+  <div class="border border-secondary rounded p-3">
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Название:</label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control mt-2 mb-2" th:field="*{name}" required minlength="3" maxlength="128"/>
+      </div>
+    </div>
+    <div class="form-group row p-auto ">
+      <label class="col-sm-4 col-form-label">Псевдоним:</label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control mt-2 mb-2" th:field="*{alias}" required minlength="2" maxlength="64"/>
+      </div>
+    </div>
+    <div class="form-group row p-auto ">
+      <label class="col-sm-4 col-form-label">Родительская категория:</label>
+      <div class="col-sm-7">
+        <select class="form-control" th:field="*{parent}">
+          <option value="0">[No Parent]</option>
+
+          <th:block th:each="cat : ${listCategories}">
+            <option th:value="${cat.id}">[[${cat.name}]]</option>
+          </th:block>
+
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Картинка</label>
+      <div class="col-sm-8">
+        <input type="hidden" th:field="*{image}" />
+        <input type="file" id="fileImage" name="fileImage" accept="image/png, image/jpeg"
+               th:required="${category.imagePath==null}"
+               class="mb-2" />
+        <div class="mb-2">
+          <img id="thumbnail" alt="Image preview" style="max-width:250px;" th:src="@{${category.imagePath}}"
+               class="img-fluid" />
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Активен:</label>
+      <div class="col-sm-6">
+        <input type="checkbox" th:field="*{enabled}" class="m-2"/>
+      </div>
+    </div>
+    <div class="text-center">
+      <input type="submit" value="Сохранить" class="btn btn-primary m-3"/>
+      <input type="button" value="Отменить" class="btn btn-secondary" id="buttonCancel"/>
+    </div>
+  </div>
+</form>
+
+<div class="modal fade text-center" id="modalDialog" role="alertdialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modalTitle">Предупреждение</h4>
+        <button type="button" class="close" data-bs-dismiss="modal">&times</button>
+      </div>
+
+      <div class="modal-body">
+        <span id="modalBody">Категория с таким названием уже есть</span>
+      </div>
+
+      <div class="modal-footer">
+        <button typr="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--<div class="modal fade text-center" id="modalDialog" role="alertdialog">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h4 class="modal-title" id="modalTitle">Предупреждение</h4>-->
+<!--        <button type="button" class="close" data-bs-dismiss="modal">&times</button>-->
+<!--      </div>-->
+
+<!--      <div class="modal-body">-->
+<!--        <span id="modalBody">Пользователь с таким e-mail уже зарегистрирован</span>-->
+<!--      </div>-->
+
+<!--      <div class="modal-footer">-->
+<!--        <button typr="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+  const image_input=document.querySelector("#fileImage");
+
+  image_input.addEventListener("change",function(){
+    const reader=new FileReader();
+    reader.addEventListener("load",() =>{
+      document.querySelector("#thumbnail").src=reader.result;
+    })
+    reader.readAsDataURL(this.files[0]);
+  })
+
+  $(document).ready(function (){
+    $("#logoutLink").on("click", function (e) {
+      e.preventDefault();
+      document.logoutForm.submit();
+    })
+  })
+  $(document).ready(function() {
+    $("#buttonCancel") .on("click", function() {
+      window.location = "[[@{/categories}]]";
+    });
+
+  });
+
+
+  moduleURL = "[[@{/categories}]]";
+  function checkUnique(form) {
+    catId = $("#id").val();
+    catName = $("#name").val();
+    catAlias = $("#alias").val();
+    csrfValue = $("input[name='_csrf']").val();
+    url = "[[@{/categories/check_unique}]]";
+    const modal=new bootstrap.Modal("#modalDialog")
+    params = {id: catId, name: catName, alias: catAlias, _csrf: csrfValue};
+    $.post(url, params, function (response){
+      if(response=="OK"){
+        form.submit();
+      }else if(response=="DuplicateName"){
+        $("#modalBody").html("Имя уже существует, переименуйте категорию")
+        modal.show();
+      }else if(response=="DuplicateAlias"){
+        $("#modalBody").html("Псевдоним уже существует, переименуйте категорию")
+      }else{
+        alert("Неизвестный ответ сервера");
+      }
+
+
+    }).fail(function(){
+      alert('failed');
+    });
+    return false;
+  }
+
+
+
+</script>
+<!--<script th:src="@{/js/common_form.js}"></script>-->
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+    <title>Login - funeral service Admin</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container-fluid text-center" >
+      <div class="text-center" >
+        <img th:src="@{/images/NewLogo.png}" style="max-width: 400px; max-height: 400px"/>
+      </div>
+<form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto">
+    <div th:if="${param.error}">
+        <p class="text-danger">Неверный e-mail/пороль</p>
+    </div>
+    <div class="border border-secondary rounded p-3">
+    <p>Доступ к понели администратора</p>
+        <p>
+            <input type="email" name="email" class="form-control" placeholder="E-mail" required>
+        </p>
+        <p>
+            <input type="password" name="password" class="form-control" placeholder="Пороль" required>
+        </p>
+        <p>
+            <input type="checkbox" name="remember-me" />&nbsp;Запомнить меня
+        </p>
+        <p>
+            <input type="submit" value="Login" class="btn btn-primary"/>
+        </p>
+    </div>
+</form>
+
+    <div th:replace="fragments :: footer"></div>
+</div>
+
+</body>
+</html>

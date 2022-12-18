@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<div th:fragment="userMenu">
+  <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+    <input type="submit">
+  </form>
+  <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <a class="navbar-brand" th:href="@{/}">
+      <img th:src="@{/images/Logo.png}" width="70" height="70"alt="Your png"/>
+    </a>
+    <button class="navbar-toggler text-center" type="button" data-toggle="collapse" data-target="#topNavbar"></button>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/}">Главная</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/products}">Товары</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/categories}">Стоимость похорон</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/categories}">Цены</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/categories}">Ритуальные товары</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/categories}">О компании</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/categories}">Контакты</a>
+        </li>
+        <div sec:authorize="hasAuthority('Admin')">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/users}">Админ панель</a>
+        </li>
+        </div>
+        <li><span></span></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" th:href="@{/account}" role="button"  data-bs-toggle="dropdown" sec:authentication="principal.username"  onclick="customizeDropDownMenu()"></a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item " th:href="@{/account}">Профиль</a> </li>
+            <li><a class="dropdown-item text-danger" id="logoutLink" href="">Выйти</a> </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+</body>
+</html>
