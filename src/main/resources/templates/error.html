@@ -1,8 +1,21 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html >
+<html lang="en" xmlns:th="https://www.thymleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bootstrap 5 404 Error Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
-<h1>Something went wrong! </h1>
-<h2>Our Engineers are on it</h2>
-<a href="/">Go Home</a>
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="text-center">
+    <p class="fs-3"> <span class="text-danger">Opps!</span> Ошибочка.</p>
+    <p class="lead">
+     Кажется инженеры закосячили...
+    </p>
+    <a th:href="@{/}" class="btn btn-primary">Вернитесь домой:)</a>
+  </div>
+</div>
 </body>
 </html>

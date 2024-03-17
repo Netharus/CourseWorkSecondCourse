@@ -54,4 +54,7 @@ public class User {
         this.roles.add(role);
     }
 
+    public User(Long id) {
+        this.id = id;
+    }
 }

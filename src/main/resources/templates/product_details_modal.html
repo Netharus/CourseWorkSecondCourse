@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+    <head th:replace="fragments :: page_head('Полная информация о модели','tag')"/>
+    <script th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
+
+<body>
+<div class="container-fluid" >
+    <div th:replace="navigation :: menu"></div>
+    <div class="text-center">
+        <h2>Управление товарами | Полная информация о модели</h2>
+    </div>
+</div>
+<div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" >Общая информация</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" >Описание</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#images" type="button" role="tab" >Фото</button>
+        </li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div class="tab-pane active p-3" id="overview" role="tabpanel" >
+            <div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Название:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control mt-2 mb-2" th:field="${product.name}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row  ">
+                    <label class="col-sm-2 col-form-label">Псевдоним:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control mt-2 mb-2" th:field="${product.alias}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row ">
+                    <label class="col-sm-2 col-form-label">Категория:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control mt-2 mb-2" th:field="${product.category.name}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Активен:</label>
+                    <div class="col-sm-7">
+                        <a th:if="${product.enabled==true}"
+                           class="fa-solid fa-circle-check fa-2x icon-green text-center text-decoration-none"
+                           style="color: green"></a>
+                        <a th:if="${product.enabled==false}"
+                           class="fa-cog fa-solid fa-solid fa-circle-xmark fa-2x icon-dark text-center text-decoration-none"
+                           style="color: red"></a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">В наличии:</label>
+                    <div class="col-sm-7">
+                        <a th:if="${product.inStock==true}"
+                           class="fa-solid fa-circle-check fa-2x icon-green text-center text-decoration-none"
+                           style="color: green"></a>
+                        <a th:if="${product.inStock==false}"
+                           class="fa-cog fa-solid fa-solid fa-circle-xmark fa-2x icon-dark text-center text-decoration-none"
+                           style="color: red"></a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Стоимость:</label>
+                    <div class="col-sm-7">
+                        <input type="number" th:field="${product.cost}" class="m-2" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Цена:</label>
+                    <div class="col-sm-7">
+                        <input type="number" th:field="${product.price}" class="m-2" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Скидка:</label>
+                    <div class="col-sm-7">
+                        <input type="number" th:field="${product.discountPercent}" class="m-2" readonly/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Время создания:</label>
+                    <div class="col-sm-7">
+                        <span th:text="${#dates.format(product.createdTime, 'dd-MM-yyyy HH:mm:ss')}"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Время последнего обновления:</label>
+                    <div class="col-sm-7">
+                        <span th:text="${#dates.format(product.updatedTime, 'dd-MM-yyyy HH:mm:ss')}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="description" role="tabpanel" >
+            <div >
+                <div class="m-2">
+                    <label>Краткое описание:</label>
+                    <div th:utext="${product.shortDescription}" class="border p-2 m-2"></div>
+                </div>
+                <div class="m-2">
+                    <label>Полное описание:</label>
+                    <div th:utext="${product.fullDescription}" class="border p-2 m-2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="images" role="tabpanel" >
+            <div>
+                <div class="mb-2">
+                    <img th:src="@{${product.mainImagePath}}" class="img-fluid" style="width: 300px"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <input type="button" value="Вернуться назад" class="btn btn-secondary" id="buttonCancel"/>
+    </div>
+    <div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function (){
+        $("#shortDescription").richText();
+        $("#fullDescription").richText();
+        $("#logoutLink").on("click", function (e) {
+            e.preventDefault();
+            document.logoutForm.submit();
+        })
+    })
+    $(document).ready(function() {
+        $("#buttonCancel") .on("click", function() {
+            window.location = "[[@{/products}]]";
+        });
+
+    });
+
+
+    moduleURL = "[[@{/products}]]";
+</script>
+<script th:src="@{/js/common_form.js}"></script>
+</body>
+
+</html>

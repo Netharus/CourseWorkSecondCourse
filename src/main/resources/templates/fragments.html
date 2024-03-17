@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymleaf.org">
-<head th:fragment="page_head(title)">
+<head th:fragment="page_head(title,remove)" th:remove="${remove}">
   <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 
@@ -29,8 +29,8 @@
 
 
 <div>
-  <th th:fragment="column_link(fieldName,columnLabel)">
-    <a th:href="@{'/users/page/'+${currentPage}+'?sortField='+${fieldName}+'&sortDir='+${sortField!=fieldName?sortDir:reverseSortDir} +${keyword != null ? '&keyword='+keyword:''}}"
+  <th th:fragment="column_link(moduleURL,fieldName,columnLabel)">
+    <a th:href="@{${moduleURL}+'/page/'+${currentPage}+'?sortField='+${fieldName}+'&sortDir='+${sortField!=fieldName?sortDir:reverseSortDir} +${keyword != null ? '&keyword='+keyword:''}}"
        class="text-white text-decoration-none">
       [[${columnLabel}]]
     </a>
@@ -40,12 +40,72 @@
   </th>
 </div>
 
-<a th:fragment="page_link(pageNum,label)" class="page-link"
-   th:href="@{'/users/page/'+${pageNum}+'?sortField='+${sortField} +'&sortDir='+${keyword != null ? '&keyword='+keyword:''}}">[[${label}]]</a>
+<a th:fragment="page_link(moduleURL,pageNum,label)" class="page-link"
+   th:href="@{${moduleURL}+'/page/'+${pageNum}+'?sortField='+${sortField} +'&sortDir='+${sortDir}+${keyword != null ? '&keyword='+keyword:''}}">[[${label}]]</a>
+
+<div th:fragment="pagination(moduleURL,entityName)" th:remove="tag">
+  <div class="text-center m-2" th:if="${totalItems} > 0">
+    <span> Показаны [[${entityName}]] # [[${startCount}]] по [[${endCount}]] из [[${totalItems}]] </span>
+  </div>
+  <div class="text-center m-2" th:unless="${totalItems} > 0">
+    <span>[[${entityName}]] не найдены</span>
+  </div>
+
+  <div th:if="${totalPages>0}">
+    <nav >
+      <ul class="pagination justify-content-center">
+        <li th:class="${currentPage>1?'page-item':'page-item disabled'}">
+          <a th:replace="fragments :: page_link(${moduleURL},'1','Первая')"></a>
+        </li>
+
+        <li th:class="${currentPage>1?'page-item':'page-item disabled'}">
+          <a th:replace="fragments :: page_link(${moduleURL},${currentPage-1},'Предыдущая')"></a>
+        </li>
+
+        <li th:class="${currentPage != i ? 'page-item':'page-item active' }"
+            th:each="i:${#numbers.sequence(1,totalPages)}">
+          <a th:replace="fragments :: page_link(${moduleURL},${i},${i})"></a>
+        </li>
+
+        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+          <a th:replace="fragments :: page_link(${moduleURL},${currentPage+1},'Следующая')"></a>
+        </li>
+
+        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+          <a th:replace="fragments :: page_link(${moduleURL},${totalPages},'Последняя')"></a>
+        </li>
+
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div th:fragment="search_form(moduleURL)">
+  <div>
+    <form th:action="@{${moduleURL}}">
+
+      <input type="hidden" name="sortField" th:value="${sortField}" />
+      <input type="hidden" name="sortDir" th:value="${sortDir}" />
+      <div class="row g-3 m-2">
+        <div class="col-auto">
+          <label class="col-form-label">Фильтр:</label>
+        </div>
+        <div class="col-auto col-sm-2">
+          <input type="search" name="keyword"  th:value="${keyword}" class="form-control " required/>
+        </div>
+        <div class="col-auto">
+          <input type="submit" value="Поиск" class="btn btn-primary" />
+          <input type="button" value="Очистить" class="btn btn-secondary " onclick="clearFilter()"/>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
 
 
-<div th:fragment="footer" class="text-center m-3">
-  <p>Магазин ритуальных услуг - Copyright &copy; Помним...</p>
+<div th:fragment="footer" class="text-center m-auto" >
+  <p >Магазин ритуальных услуг - Copyright &copy; Помним...</p>
 </div>
 </body>
 </html>

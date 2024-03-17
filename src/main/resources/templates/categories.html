@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="https://www.thymleaf.org">
-<head th:replace="fragments :: page_head('Управление категориями')">
+<head th:replace="fragments :: page_head('Управление категориями','none')">
 </head>
 <body>
 <div class="container-fluid">
@@ -12,8 +12,7 @@
     <div class="row m-2 justify-content-start">
         <div class="col">
             <a th:href="@{/categories/new}"><i class="fa-solid fa-folder-plus fa-2xl" style="color:#183153" ></i></i></a>
-            &nbsp;|&nbsp;
-            <a th:href="@{/categories/export/excel}"><i class="fa-solid fa-file-excel fa-2xl " style="color: green"></i></a>
+<!--            &nbsp;|&nbsp;-->
         </div>
     </div>
 
@@ -22,43 +21,24 @@
         [[${massage}]]
     </div>
 
-    <div>
-        <form th:action="@{/categories/page/1}">
-
-            <input type="hidden" name="sortField" th:value="${sortField}" />
-            <input type="hidden" name="sortDir" th:value="${sortDir}" />
-            <div class="row g-3 m-2">
-                <div class="col-auto">
-                    <label class="col-form-label">Фильтр:</label>
-                </div>
-                <div class="col-auto col-sm-2">
-                    <input type="search" name="keyword"  th:value="${keyword}" class="form-control " required/>
-                </div>
-                <div class="col-auto">
-                    <input type="submit" value="Search" class="btn btn-primary" />
-                    <input type="button" value="Clear" class="btn btn-secondary " onclick="clearFilter()"/>
-                </div>
-            </div>
-        </form>
-    </div>
-
+    <div th:replace="fragments :: search_form('/categories/page/1')"></div>
     <div>
         <table class="table table-bordered table-striped table-responsive-xl">
             <thead class="table-dark">
             <tr>
                 <th>Id</th>
                 <th>Фото категории</th>
-                <th>Название категории</th>
+                <th th:replace="fragments::column_link('/categories','name','Название категории')"/>
                 <th>Псевдоним</th>
                 <th>Статус</th>
                 <th></th>
 <!--                <th th:replace="fragments::column_link('id','id')"/>-->
 <!--                <th th:replace="fragments::column_link('email','e-mail')"/>-->
-<!--                <th th:replace="fragments::column_link('lastName','Фамилия')"/>-->
-<!--                <th th:replace="fragments::column_link('firstName','Имя')"/>-->
-<!--                <th th:replace="fragments::column_link('patronymic','Отчество')"/>-->
-<!--                <th>Роль</th>-->
-<!--                <th th:replace="fragments::column_link('enabled','Статус')"/>-->
+<!--                <th th:replace="fragments::column_link('lastname','фамилия')"/>-->
+<!--                <th th:replace="fragments::column_link('firstname','имя')"/>-->
+<!--                <th th:replace="fragments::column_link('patronymic','отчество')"/>-->
+<!--                <th>роль</th>-->
+<!--                <th th:replace="fragments::column_link('enabled','статус')"/>-->
 <!--                <th></th>-->
             </tr>
             </thead>
@@ -78,7 +58,7 @@
                        style="color: red" th:href="@{'/categories/category_status/'+${cat.id}}"></a>
                 <td>
                 <a class="btn btn-success" th:href="@{'/categories/edit/'+${cat.id}}">Редактировать</a> &nbsp;
-                    <th:block th:if="${cat.hasChildren==false}"><a class="btn btn-outline-danger" style="" th:href="@{'/categories/delete/'+${cat.id}}" >Удалить</a></th:block>
+                <th:block th:if="${cat.hasChildren==false&&productService.findProductByCategoryID(cat.id)==false}"><a class="btn btn-outline-danger" style="" th:href="@{'/categories/delete/'+${cat.id}}" >Удалить</a></th:block>
                 </td>
             </tr>
             </tbody>
@@ -86,40 +66,41 @@
     </div>
 
 
-<!--    <div class="text-center m-2" th:if="${totalItems} > 0">-->
-<!--        <span> Показаны пользователи # [[${startCount}]] по [[${endCount}]] из [[${totalItems}]] </span>-->
+<!--    <div class="text-center m-2" th:if="${totalitems} > 0">-->
+<!--        <span> показаны пользователи # [[${startcount}]] по [[${endcount}]] из [[${totalitems}]] </span>-->
 <!--    </div>-->
-<!--    <div class="text-center m-2" th:unless="${totalItems} > 0">-->
-<!--        <span>Пользователи не найдены</span>-->
+<!--    <div class="text-center m-2" th:unless="${totalitems} > 0">-->
+<!--        <span>пользователи не найдены</span>-->
 <!--    </div>-->
 
-<!--    <div th:if="${totalPages>1}">-->
+<!--    <div th:if="${totalpages>1}">-->
 <!--        <nav >-->
 <!--            <ul class="pagination justify-content-center">-->
-<!--                <li th:class="${currentPage>1?'page-item':'page-item disabled'}">-->
-<!--                    <a th:replace="fragments :: page_link('1','Первая')"></a>-->
+<!--                <li th:class="${currentpage>1?'page-item':'page-item disabled'}">-->
+<!--                    <a th:replace="fragments :: page_link('1','первая')"></a>-->
 <!--                </li>-->
 
-<!--                <li th:class="${currentPage>1?'page-item':'page-item disabled'}">-->
-<!--                    <a th:replace="fragments :: page_link(${currentPage-1},'Предыдущая')"></a>-->
+<!--                <li th:class="${currentpage>1?'page-item':'page-item disabled'}">-->
+<!--                    <a th:replace="fragments :: page_link(${currentpage-1},'предыдущая')"></a>-->
 <!--                </li>-->
 
-<!--                <li th:class="${currentPage != i ? 'page-item':'page-item active' }"-->
-<!--                    th:each="i:${#numbers.sequence(1,totalPages)}">-->
+<!--                <li th:class="${currentpage != i ? 'page-item':'page-item active' }"-->
+<!--                    th:each="i:${#numbers.sequence(1,totalpages)}">-->
 <!--                    <a th:replace="fragments :: page_link(${i},${i})"></a>-->
 <!--                </li>-->
 
-<!--                <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">-->
-<!--                    <a th:replace="fragments :: page_link(${currentPage+1},'Следующая')"></a>-->
+<!--                <li th:class="${currentpage < totalpages ? 'page-item' : 'page-item disabled'}">-->
+<!--                    <a th:replace="fragments :: page_link(${currentpage+1},'следующая')"></a>-->
 <!--                </li>-->
 
-<!--                <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">-->
-<!--                    <a th:replace="fragments :: page_link(${totalPages},'Последняя')"></a>-->
+<!--                <li th:class="${currentpage < totalpages ? 'page-item' : 'page-item disabled'}">-->
+<!--                    <a th:replace="fragments :: page_link(${totalpages},'последняя')"></a>-->
 <!--                </li>-->
 
 <!--            </ul>-->
 <!--        </nav>-->
 <!--    </div>-->
+    <div th:replace="fragments :: pagination('/categories','категории')"></div>
 
     <div class="text-center">
         <div th:replace="fragments :: footer"></div>
@@ -134,7 +115,7 @@
     })
 
     function clearFilter(){
-        window.location="[[@{/users}]]";
+        window.location="[[@{/categories}]]";
     }
 </script>
 </body>

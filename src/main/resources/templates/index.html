@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymleaf.org" xmlns:sec="http://www.thymleaf.org/thymleaf-extras-springsecurity6">
-<head th:replace="fragments :: page_head('Домашняя страница')">
+<head th:replace="fragments :: page_head('Домашняя страница','none')">
     <style>
         .dropdown-menu{
             animation: .5s slideup;
@@ -17,19 +17,21 @@
 <body>
 <div class="container-fluid">
 <div th:replace="userNavigation :: userMenu"></div>
+<div th:replace="userNavigation :: search_nav"></div>
     <div>
-        <h1>Домашняя страница</h1>
+        <h1>Категории</h1>
+    </div>
+
+    <div class="row">
+        <div class="col text-center" th:each="cat:${categoryList}">
+            <div>
+                <img th:src="@{${cat.imagePath}}" style="width: 250px" class="img-fluid"/>
+            </div>
+            <a th:href="@{'/c/'+${cat.alias}}">[[${cat.name}]]</a>
+        </div>
     </div>
 
     <div th:replace="fragments :: footer"></div>
 </div>
-<!--<script type="text/javascript">-->
-<!--    $(document).ready(function (){-->
-<!--        $("#logoutLink").on("click", function (e) {-->
-<!--            e.preventDefault();-->
-<!--            document.logoutForm.submit();-->
-<!--        })-->
-<!--    })-->
-<!--</script>-->
 </body>
 </html>

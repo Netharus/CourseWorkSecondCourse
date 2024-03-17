@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="content" remove="tag">
+    <div>
+        <div class="col border m-3 p-2">
+            <label>Основная фотография:</label>
+            <div class="mb-2">
+                <img id="thumbnail" alt="Предварительный просмотр основной фотографии" style="max-width:250px;" th:src="@{${product.mainImagePath}}"
+                     class="img-fluid" />
+            </div>
+            <div>
+                <input type="hidden" th:field="*{mainImage}" />
+                <input type="file" id="fileImage" name="fileImage" accept="image/png, image/jpeg"
+                       th:required="${product.mainImagePath==null}"
+                       class="mb-2" />
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

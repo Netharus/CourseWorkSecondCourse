@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymleaf.org">
-<head th:replace="fragments :: page_head('Ваш аккаунт')">
+<head th:replace="fragments :: page_head('Ваш аккаунт','none')">
 
 </head>
 
@@ -42,19 +42,6 @@
         <input  type="text" class="form-control mt-2 mb-2" th:field="*{patronymic}" required  maxlength="45"/>
       </div>
     </div>
-<!--    <div class="form-group row">-->
-<!--      <label class="col-sm-4 col-form-label">Пороль:</label>-->
-<!--      <div class="col-sm-7">-->
-<!--        <input th:if="${user.id!=null}" type="password" class="form-control mt-2 mb-2" th:field="*{password}"  minlength="8" maxlength="64" placeholder="Чтобы оставить старый пороль,оставьте пустым"/>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="form-group row">-->
-<!--      <label class="col-sm-4 col-form-label">Подтвердите пороль:</label>-->
-<!--      <div class="col-sm-7">-->
-<!--        <input th:if="${user.id!=null}" type="password" class="form-control mt-2 mb-2" th:field="*{password}"  minlength="8" maxlength="64" placeholder="Чтобы оставить старый пороль,оставьте пустым"/>-->
-<!--      </div>-->
-<!--    </div>-->
-
     <div class="form-group row p-auto">
       <button type="button" class="btn btn-link btn-sm mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#modalDialog">
         Изменить пороль
@@ -116,7 +103,7 @@
 <script type="text/javascript">
   $(document).ready(function(){
     $("#buttonCancel").on("click", function(){
-      window.location="[[@{/users}]]";
+      window.location="[[@{/}]]";
     });
   });
 function checkPassword(confirmPassword){

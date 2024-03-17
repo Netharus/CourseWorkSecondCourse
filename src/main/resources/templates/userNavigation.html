@@ -15,25 +15,10 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/}">Главная</a>
+          <a class="nav-link" th:href="@{/}">Категории</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/products}">Товары</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/categories}">Стоимость похорон</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/categories}">Цены</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/categories}">Ритуальные товары</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/categories}">О компании</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/categories}">Контакты</a>
+          <a class="nav-link" th:href="@{/cart}">Корзина</a>
         </li>
         <div sec:authorize="hasAuthority('Admin')">
         <li class="nav-item">
@@ -41,6 +26,7 @@
         </li>
         </div>
         <li><span></span></li>
+        <th:block sec:authorize="isAuthenticated()">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" th:href="@{/account}" role="button"  data-bs-toggle="dropdown" sec:authentication="principal.username"  onclick="customizeDropDownMenu()"></a>
           <ul class="dropdown-menu">
@@ -48,9 +34,34 @@
             <li><a class="dropdown-item text-danger" id="logoutLink" href="">Выйти</a> </li>
           </ul>
         </li>
+        </th:block>
+        <th:block sec:authorize="!isAuthenticated()">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/account/registration}">Зарегистрироваться</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/login}">Войти</a>
+          </li>
+        </th:block>
       </ul>
     </div>
   </nav>
+</div>
+<div th:fragment="search_nav">
+    <nav class="navbar navbar-expand-sm bg-Light">
+      <div class="collapse navbar-collapse" id="searchNavbar">
+        <form class="form-inline" th:action="@{/userSearch}" method="get">
+          <div  class ="row g-3 m-2">
+              <div class="col-auto">
+              <input type="search" name="keyword" class="form-control" required placeholder="Поиск" th:value="${keyword}"/>
+              </div>
+              <div class="col-auto">
+              <button type="submit" class=" btn fa-solid fa-magnifying-glass text-decoration-none" style="color: green"/>
+              </div>
+          </div>
+        </form>
+      </div>
+    </nav>
 </div>
 </body>
 </html>

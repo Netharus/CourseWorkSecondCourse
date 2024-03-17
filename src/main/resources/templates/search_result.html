@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org" xmlns:sec="http://www.thymleaf.org/thymleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head(${pageTitle},'none')">
+    <style>
+        .dropdown-menu{
+            animation: .5s slideup;
+        }
+        @keyframes slideup {
+            from{
+                transform: translateY(10%);
+            }to{
+            transform: translateY(0%);
+             }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+<div th:replace="userNavigation :: userMenu"></div>
+    <div>
+        <h2>Результат поиска '[[${keyword}]]'</h2>
+    </div>
+    <div th:replace="userNavigation :: search_nav"></div>
+
+    <div class="row">
+        <th:block th:each="product:${listProducts}">
+            <a th:href="@{'/p/'+${product.alias}}">
+                <div class="col">
+                    <img th:src="@{${product.mainImagePath}}" style="width: 250px" class="img-fluid"/>
+                    </br>
+                    <b>[[${product.name}]]</b>
+                </div>
+            </a>
+            <div th:if="${product.discountPercent<=0}">
+                <span>$[[${product.price}]]</span>
+            </div>
+            <div th:unless="${product.discountPercent<=0}">
+                <span style="font-size: larger;color: red">$[[${product.discountPrice}]]</span>
+                <del><span>$[[${product.price}]]</span></del>
+            </div>
+        </th:block>
+    </div>
+
+
+    <div th:replace="fragments :: pagination('/userSearch','Продукты')"></div>
+    <div th:replace="fragments :: footer"></div>
+</div>
+</body>
+</html>

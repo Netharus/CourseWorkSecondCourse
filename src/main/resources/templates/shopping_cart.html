@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org" xmlns:sec="http://www.thymleaf.org/thymleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head('Корзина','none')">
+    <style>
+        .dropdown-menu{
+            animation: .5s slideup;
+        }
+        @keyframes slideup {
+            from{
+                transform: translateY(10%);
+            }to{
+            transform: translateY(0%);
+             }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+<div th:replace="userNavigation :: userMenu"></div>
+<div th:replace="userNavigation :: search_nav"></div>
+    <div class="text-center">
+        <h1>Корзина</h1>
+    </div>
+
+
+    <div class="row m-1">
+        <div class="col-sm-8">
+            <th:block th:each="item, status :${cartItems}">
+                <div class="row border rounded">
+                    <div class="col-1">
+                        <div>[[${status.count}]]</div>
+                        <div>
+                            <a class="fa-solid fa-trash-can linkRemove" th:href="@{'/cart/remove/'+${item.product.id}}" style="color: #282828"></a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <img th:src="@{${item.product.mainImagePath}}" class="img-fluid">
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <a th:href="@{'/p/'+${item.product.alias}}" target="_blank"><b>[[${item.product.name}]]</b></a>
+                        </div>
+                        <div th:replace="quantity_control :: quantity_control(${item.quantity},${item.product.id})"></div>
+                        <div>
+                            <div>
+                                <div th:if="${item.product.discountPercent<=0}">
+                                    <span>X&nbsp; $[[${item.product.price}]]</span>
+                                </div>
+                                <div th:unless="${item.product.discountPercent<=0}">
+                                    <span>X&nbsp;$</span>
+                                    <span style="font-size: larger;color: red"> [[${item.product.discountPrice}]]</span>
+                                    <del><span> $[[${item.product.price}]]</span></del>
+                                </div>
+                                <div>
+                                    <span>=&nbsp;$</span>
+                                    <span class="h4 subtotal" th:id="'subtotal' +${item.product.id}">[[${item.subtotal}]]</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            <div class="row m-1">&nbsp;</div>
+            </th:block>
+        </div>
+        <div class="col-sm-4" th:unless="${cartItems.isEmpty()}">
+            <div> <span class="h3">Итого</span></div>
+            <div class="mt-2">
+                <span class="h3" id="total"> $[[${estimatedTotal}]]</span>
+            </div>
+            <div class="mt-2">
+                <button class="btn btn-danger">Оплатить</button>
+            </div>
+        </div>
+        <div class="row m-1" th:if="${cartItems.isEmpty()}">
+            <span class="h3">Корзина пуста</span>
+        </div>
+    </div>
+    <div class="modal fade text-center" id="modalDialog" role="alertdialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle">Предупреждение</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <span id="modalBody"></span>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+    contextPath = "[[@{/}]]"
+    var csrfHeaderName='[[${_csrf.headerName}]]';
+    var csrfValue='[[${_csrf.token}]]';
+</script>
+<script th:src="@{/js/shoping_cart.js}"></script>
+<script th:src="@{/js/jquery.number.min.js}"></script>
+</body>
+</html>

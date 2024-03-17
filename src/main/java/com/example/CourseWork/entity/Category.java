@@ -1,10 +1,14 @@
 package com.example.CourseWork.entity;
 
+import com.example.CourseWork.repository.ProductRepository;
+import com.example.CourseWork.service.ProductService;
 import jakarta.persistence.*;
 import lombok.*;
 import nonapi.io.github.classgraph.json.Id;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,6 +20,7 @@ import java.util.Set;
 //@ToString
 @Table(name="categories")
 public class Category {
+
     @jakarta.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +29,11 @@ public class Category {
     private String name;
     @Column(length=64,nullable = false,unique = true)
     private String alias;
+    @Column(name="all_parent_ids", length = 256,nullable = true)
+    private String allParentIDs;
     @Column(length=128,nullable = false)
     private String image;
     private boolean enabled;
-
     public Category(String name) {
         this.name = name;
         this.alias = name;
@@ -80,6 +86,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
+    @OrderBy("name asc")
     private Set<Category> children=new HashSet<>();
 
     @Transient
@@ -102,4 +109,7 @@ public class Category {
 
     @Transient
     private boolean hasChildren;
+
+
+
 }

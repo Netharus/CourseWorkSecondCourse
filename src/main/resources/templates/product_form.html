@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+<head th:replace="fragments :: page_head('[[${pageTitle}]]','tag')"/>
+  <link rel="styLesheet" th:href="@{/richtext/richtext.min.css}"/>
+  <script th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
+
+<body>
+<div class="container-fluid" >
+  <div th:replace="navigation :: menu"></div>
+  <div class="text-center">
+    <h2>Управление товарами | [[${pageTitle}]]</h2>
+  </div>
+</div>
+<form th:action="@{/products/save}"  method="post" enctype="multipart/form-data" onsubmit="return checkUnique(this);"
+      th:object="${product}" >
+
+  <input type="hidden" th:field="*{id}">
+  <div>
+
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" >Общая информация</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" >Описание</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#images" type="button" role="tab" >Фото</button>
+        </li>
+      </ul>
+
+
+      <div class="tab-content">
+        <div class="tab-pane active p-3" id="overview" role="tabpanel" >
+          <div th:replace="product_overview :: content"></div>
+        </div>
+        <div class="tab-pane" id="description" role="tabpanel" >
+          <div th:replace="product_description :: content"></div>
+        </div>
+        <div class="tab-pane" id="images" role="tabpanel" >
+          <div th:replace="product_image:: content"></div>
+        </div>
+      </div>
+    <div class="text-center">
+      <input type="submit" value="Сохранить"  class="btn btn-primary m-3"/>
+      <input type="button" value="Отменить" class="btn btn-secondary" id="buttonCancel"/>
+    </div>
+
+
+    <div class="modal fade text-center" id="modalDialog" role="alertdialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalTitle">Предупреждение</h4>
+            <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <span id="modalBody">Товар с таким названием уже есть</span>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>
+
+<!--<div class="modal fade text-center" id="modalDialog" role="alertdialog">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h4 class="modal-title" id="modalTitle">Предупреждение</h4>-->
+<!--        <button type="button" class="close" data-bs-dismiss="modal">&times</button>-->
+<!--      </div>-->
+
+<!--      <div class="modal-body">-->
+<!--        <span id="modalBody">Категория с таким названием уже есть</span>-->
+<!--      </div>-->
+
+<!--      <div class="modal-footer">-->
+<!--        <button typr="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<!--<div class="modal fade text-center" id="modalDialog" role="alertdialog">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h4 class="modal-title" id="modalTitle">Предупреждение</h4>-->
+<!--        <button type="button" class="close" data-bs-dismiss="modal">&times</button>-->
+<!--      </div>-->
+
+<!--      <div class="modal-body">-->
+<!--        <span id="modalBody">Пользователь с таким e-mail уже зарегистрирован</span>-->
+<!--      </div>-->
+
+<!--      <div class="modal-footer">-->
+<!--        <button typr="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+  // const image_input=document.querySelector("#fileImage");
+  //
+  // image_input.addEventListener("change",function(){
+  //   const reader=new FileReader();
+  //   reader.addEventListener("load",() =>{
+  //     document.querySelector("#thumbnail").src=reader.result;
+  //   })
+  //   reader.readAsDataURL(this.files[0]);
+  // })
+
+  $(document).ready(function (){
+    $("#shortDescription").richText();
+    $("#fullDescription").richText();
+    $("#logoutLink").on("click", function (e) {
+      e.preventDefault();
+      document.logoutForm.submit();
+    })
+  })
+  $(document).ready(function() {
+    $("#buttonCancel") .on("click", function() {
+      window.location = "[[@{/products}]]";
+    });
+
+  });
+
+
+  moduleURL = "[[@{/products}]]";
+
+  function checkUnique(form) {
+    catId = $("#id").val();
+    catName = $("#name").val();
+    csrfValue = $("input[name='_csrf']").val();
+    url = "[[@{/products/check_unique}]]";
+    const modal=new bootstrap.Modal("#modalDialog")
+    params = {id: catId, name: catName, _csrf: csrfValue};
+    $.post(url, params, function (response){
+      if(response=="OK"){
+        form.submit();
+      }else if(response=="Duplicate"){
+
+       modal.show();
+      }else{
+        alert("Неизвестный ответ сервера");
+      }
+
+
+    }).fail(function(){
+      alert('failed');
+    });
+    return false;
+  }
+</script>
+<script th:src="@{/js/common_form.js}"></script>
+</body>
+
+</html>

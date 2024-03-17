@@ -1,0 +1,96 @@
+<!doctype html>
+<html xmlns:th="https://www.thymleaf.org">
+<head th:replace="fragments :: page_head('Управление товарами','none')">
+</head>
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: menu"></div>
+    <div>
+        <h2>Управление товарами</h2>
+    </div>
+
+    <div class="row m-2 justify-content-start">
+        <div class="col">
+            <a th:href="@{/products/new}"><i class="fa-solid fa-folder-plus fa-2xl" style="color:#183153" ></i></i></a>
+        </div>
+        </div>
+    </div>
+
+
+    <div th:if="${massage!=null}" class="alert alert-success text-center">
+        [[${massage}]]
+    </div>
+
+    <div th:replace="fragments :: search_form('/products/page/1')"></div>
+    <div>
+        <table class="table table-bordered table-striped table-responsive-xl">
+            <thead class="table-dark">
+            <tr>
+                <th th:replace="fragments::column_link('/products','name','Id')"/></th>
+                <th>Фото продукта</th>
+                <th th:replace="fragments::column_link('/products','name','Название')"/></th>
+                <th th:replace="fragments::column_link('/products','category.name','Категория')"/></th>
+                <th th:replace="fragments::column_link('/products','enabled','Статус')"/></th>
+                <th ></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product: ${listProducts}">
+                <td>[[${product.id}]]</td>
+                <td><img th:src="@{${product.mainImagePath}}" style="width: 100px" class="img-fluid"/>
+                </td>
+                <td>[[${product.name}]]</td>
+                <td>[[${product.category.name}]]</td>
+                <td><a th:if="${product.enabled==true}"
+                       class="fa-solid fa-circle-check fa-2x icon-green text-center text-decoration-none"
+                       style="color: green" th:href="@{'/products/product_status/'+${product.id}}" title="Изменить статус"></a>
+                    <a th:if="${product.enabled==false}"
+                       class="fa-cog fa-solid fa-solid fa-circle-xmark fa-2x icon-dark text-center text-decoration-none"
+                       style="color: red" th:href="@{'/products/product_status/'+${product.id}}"></a>
+                <td class="col-md-auto">
+                <div class="row align-items-center">
+                    <div class="col-md-auto">
+                    <a class="fa-solid fa-file-circle-question fa-2x text-center text-decoration-none m-2" style="color:green" id="productDetails" title="Увидеть подробную информацию" th:href="@{'/products/details/'+${product.id}}" ></a>
+                    </div>
+                    <div class="col-md-auto">
+                    <a class="btn btn-success" th:href="@{'/products/edit/'+${product.id}}">Редактировать</a> &nbsp;
+                    </div>
+                    <div class="col-md-auto">
+                    <a class="btn btn-outline-danger" style="" th:href="@{'/products/delete/'+${product.id}}" >Удалить</a>
+                    </div>
+                </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+<div th:replace="fragments :: pagination('/products','продукты')"></div>
+
+    <div class="text-center">
+        <div th:replace="fragments :: footer"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function (){
+        $("#logoutLink").on("click", function (e) {
+            e.preventDefault();
+            document.logoutForm.submit();
+        })
+
+        // $("#productDetails").on("click", function (e) {
+        //     e.preventDefault();
+        //     linkDetailURL=$(this).attr("href");
+        //
+        //     const modal=new bootstrap.Modal("#detailsModal")
+        //     $("#modalContent").html(src=linkDetailURL)
+        //     modal.show();
+        // })
+    })
+
+
+    function clearFilter(){
+        window.location="[[@{/products}]]";
+    }
+</script>
+</body>
+</html>

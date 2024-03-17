@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org" xmlns:sec="http://www.thymleaf.org/thymleaf-extras-springsecurity6">
+<head th:replace="fragments :: page_head(${pageTitle},'none')">
+
+    <style>
+        .dropdown-menu{
+            animation: .5s slideup;
+        }
+        @keyframes slideup {
+            from{
+                transform: translateY(10%);
+            }to{
+            transform: translateY(0%);
+             }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+<div th:replace="userNavigation :: userMenu"></div>
+<div th:replace="userNavigation :: search_nav"></div>
+    <div>
+        <h1>Товар</h1>
+    </div>
+
+    <div th:replace="breadcrumb :: content"></div>
+
+</div>
+<div>
+    <div class="row">
+        <div class="col-sm">
+            <div>
+                <img th:src="@{${product.mainImagePath}}" style="width: 400px" class="img-fluid"/>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div>
+                <h2>[[${product.name}]]</h2>
+            </div>
+            <div>
+                <div>
+                    Предыдущая цена:
+                    <span th:if="${product.discountPercent<=0}">$[[${product.price}]]</span>
+                    <del th:unless="${product.discountPercent<=0}"><span>$[[${product.price}]]</span></del>
+                </div>
+                <div th:unless="${product.discountPercent<=0}">
+                     Цена:
+                    <span style="font-size: larger;color: red">$[[${product.discountPrice}]]</span>
+                    ([[${product.discountPercent}]]%off)
+                </div>
+                <div>&nbsp;</div>
+                <div th:utext="${product.shortDescription}"></div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <span th:if="${product.inStock}" class="text-success"><b>В наличии</b></span>
+            <span th:unless="${product.inStock}" class="text-danger"><b>Товар отсутствует</b></span>
+             <th:block th:if="${product.inStock==true}">
+            <div th:replace="quantity_control :: quantity_control(1,${product.id})"></div>
+            <div class="mt-3">
+                <input type="button" value="Добавить в корзину" id="buttonAdd2Cart" class="btn btn-primary">
+            </div>
+             </th:block>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div><hr/></div>
+            <div>
+                <h3><b>Полное описание товара</b></h3>
+            </div>
+            <div th:utext="${product.fullDescription}" ></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade text-center" id="modalDialog" role="alertdialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle">Предупреждение</h4>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <span id="modalBody"></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/quantity_control.js}"></script>
+
+    <div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+    contextPath = "[[@{/}]]"
+    productId = "[[${product.id}]]";
+    var csrfHeaderName='[[${_csrf.headerName}]]';
+    var csrfValue='[[${_csrf.token}]]';
+
+</script>
+<script type="text/javascript" th:src="@{/js/add_to_cart.js}"></script>
+</body>
+</html>

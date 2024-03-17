@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head th:replace="fragments :: page_head('Ваш аккаунт','none')">
+
+</head>
+
+<body>
+<div class="container-fluid" >
+  <div th:replace="userNavigation :: userMenu"></div>
+    <div class="text-center">
+    <h2>Регистрация</h2>
+    </div>
+  </div>
+  <form th:action="@{/account/create_new}" method="post" style="max-width:700px; margin: 0 auto"
+  th:object="${user}" onsubmit="return checkEmailUnique(this);">
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{roles}" th:text="${role.name}" th:value="${role.id}">
+  <div class="border border-secondary rounded p-3">
+      <div class="form-group row">
+        <label class="col-sm-4 col-form-label">E-mail:</label>
+        <div class="col-sm-7">
+          <input type="email" class="form-control mt-2 mb-2" th:field="*{email}" required minlength="8" maxlength="128"/>
+        </div>
+      </div>
+    <div class="form-group row p-auto ">
+      <label class="col-sm-4 col-form-label">Фамилия:</label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control mt-2 mb-2" th:field="*{lastName}" required minlength="2" maxlength="45"/>
+      </div>
+    </div>
+    <div class="form-group row p-auto ">
+      <label class="col-sm-4 col-form-label">Имя:</label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control mt-2 mb-2" th:field="*{firstName}" required minlength="2" maxlength="45"/>
+      </div>
+    </div>
+    <div class="form-group row p-auto ">
+      <label class="col-sm-4 col-form-label">Отчество:</label>
+      <div class="col-sm-7">
+        <input  type="text" class="form-control mt-2 mb-2" th:field="*{patronymic}" required  maxlength="45"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Пороль:</label>
+      <div class="col-sm-7">
+        <input  type="password" class="form-control mt-2 mb-2" th:field="*{password}"  minlength="8" maxlength="64" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Подтвердите пороль:</label>
+      <div class="col-sm-7">
+        <input type="password" class="form-control mt-2 mb-2" id="confirmPassword" oninput="checkPassword(this)" minlength="8" maxlength="64"/>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <input type="submit" value="Сохранить" class="btn btn-primary m-3"/>
+      <input type="button" value="Отменить" class="btn btn-secondary" id="buttonCancel"/>
+    </div>
+  </div>
+  </form>
+<div class="modal fade text-center" id="modalDialog" role="alertdialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modalTitle">Предупреждение</h4>
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <span id="modalBody">Пользователь с таким e-mail уже зарегистрирован</span>
+      </div>
+
+      <div class="modal-footer">
+        <button typr="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments :: footer"></div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#buttonCancel").on("click", function(){
+      window.location="[[@{/}]]";
+    });
+  });
+
+  function checkEmailUnique(form){
+    url="[[@{/account/check_email}]]";
+    userEmail=$("#email").val();
+    userId=$("#id").val();
+    csrfValue=$("input[name='_csrf']").val();
+    params={id:userId, email: userEmail,_csrf:csrfValue};
+    const modal=new bootstrap.Modal("#modalDialog")
+    $.post(url,params,function (response){
+      if(response =="OK"){
+        form.submit();
+      }else if(response=="Duplicated"){
+        modal.show();
+      } else {
+        alert("Неизвестный ответ сервера");
+      }
+
+    }).fail(function () {
+      alert("Не может подключится к серверу");
+    });
+
+
+    return false;
+  }
+  function checkPassword(confirmPassword){
+    if(confirmPassword.value!= $("#password").val()){
+        confirmPassword.setCustomValidity("Пароли разные!");
+    }else{
+      confirmPassword.setCustomValidity("");
+    }
+  }
+</script>
+</body>
+
+</html>

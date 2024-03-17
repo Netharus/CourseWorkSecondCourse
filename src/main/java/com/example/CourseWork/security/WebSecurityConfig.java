@@ -54,13 +54,17 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests().requestMatchers("/login").permitAll()
-                .requestMatchers("/users/**").hasAuthority("Admin")
-                .requestMatchers("/categories/**").hasAuthority("Admin")
-                .anyRequest().authenticated().
-                and().formLogin(form -> form
+                .requestMatchers("/users/**","/categories/**","/products/**").hasAuthority("Admin")
+                .requestMatchers("/account","/cart").authenticated()
+                .anyRequest()
+                .permitAll()
+                .and().formLogin(form -> form
                         .loginPage("/login")
-                        .permitAll().usernameParameter("email")).logout()
-                .permitAll().logoutSuccessUrl("/login").and().rememberMe();
+                        .permitAll()
+                        .usernameParameter("email"))
+                .logout()
+                .permitAll().logoutSuccessUrl("/").and().rememberMe().key("AbcDefgKLDSLmvop_0123456789")
+                .tokenValiditySeconds(7 * 24 * 60 * 60);
 
         return http.build();
     }

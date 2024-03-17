@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymleaf.org">
-<head th:replace="fragments :: page_head('Управление пользователями')">
+<head th:replace="fragments :: page_head('Управление пользователями','none')">
 </head>
 <body>
 <div class="container-fluid">
@@ -21,38 +21,38 @@
   <div th:if="${massage!=null}" class="alert alert-success text-center">
     [[${massage}]]
   </div>
+  <div th:replace="fragments :: search_form('/users/page/1')"></div>
+<!--  <div>-->
+<!--    <form th:action="@{/users/page/1}">-->
 
-  <div>
-    <form th:action="@{/users/page/1}">
-
-      <input type="hidden" name="sortField" th:value="${sortField}" />
-      <input type="hidden" name="sortDir" th:value="${sortDir}" />
-      <div class="row g-3 m-2">
-        <div class="col-auto">
-          <label class="col-form-label">Фильтр:</label>
-        </div>
-        <div class="col-auto col-sm-2">
-          <input type="search" name="keyword"  th:value="${keyword}" class="form-control " required/>
-        </div>
-        <div class="col-auto">
-          <input type="submit" value="Search" class="btn btn-primary" />
-          <input type="button" value="Clear" class="btn btn-secondary " onclick="clearFilter()"/>
-        </div>
-     </div>
-    </form>
-  </div>
+<!--      <input type="hidden" name="sortField" th:value="${sortField}" />-->
+<!--      <input type="hidden" name="sortDir" th:value="${sortDir}" />-->
+<!--      <div class="row g-3 m-2">-->
+<!--        <div class="col-auto">-->
+<!--          <label class="col-form-label">Фильтр:</label>-->
+<!--        </div>-->
+<!--        <div class="col-auto col-sm-2">-->
+<!--          <input type="search" name="keyword"  th:value="${keyword}" class="form-control " required/>-->
+<!--        </div>-->
+<!--        <div class="col-auto">-->
+<!--          <input type="submit" value="Search" class="btn btn-primary" />-->
+<!--          <input type="button" value="Clear" class="btn btn-secondary " onclick="clearFilter()"/>-->
+<!--        </div>-->
+<!--     </div>-->
+<!--    </form>-->
+<!--  </div>-->
 
   <div>
     <table class="table table-bordered table-striped table-responsive-xl">
       <thead class="table-dark">
         <tr>
-          <th th:replace="fragments::column_link('id','id')"/>
-          <th th:replace="fragments::column_link('email','e-mail')"/>
-          <th th:replace="fragments::column_link('lastName','Фамилия')"/>
-          <th th:replace="fragments::column_link('firstName','Имя')"/>
-          <th th:replace="fragments::column_link('patronymic','Отчество')"/>
+          <th th:replace="fragments::column_link('/users','id','id')"/>
+          <th th:replace="fragments::column_link('/users','email','e-mail')"/>
+          <th th:replace="fragments::column_link('/users','lastName','Фамилия')"/>
+          <th th:replace="fragments::column_link('/users','firstName','Имя')"/>
+          <th th:replace="fragments::column_link('/users','patronymic','Отчество')"/>
           <th>Роль</th>
-          <th th:replace="fragments::column_link('enabled','Статус')"/>
+          <th th:replace="fragments::column_link('/users','enabled','Статус')"/>
           <th></th>
         </tr>
       </thead>
@@ -83,40 +83,11 @@
   </div>
 
 
-  <div class="text-center m-2" th:if="${totalItems} > 0">
-    <span> Показаны пользователи # [[${startCount}]] по [[${endCount}]] из [[${totalItems}]] </span>
-  </div>
-  <div class="text-center m-2" th:unless="${totalItems} > 0">
-    <span>Пользователи не найдены</span>
-  </div>
+<div th:replace="fragments :: pagination('/users','пользователи')">
 
-  <div th:if="${totalPages>1}">
-    <nav >
-      <ul class="pagination justify-content-center">
-        <li th:class="${currentPage>1?'page-item':'page-item disabled'}">
-          <a th:replace="fragments :: page_link('1','Первая')"></a>
-        </li>
+</div>
 
-        <li th:class="${currentPage>1?'page-item':'page-item disabled'}">
-          <a th:replace="fragments :: page_link(${currentPage-1},'Предыдущая')"></a>
-        </li>
 
-        <li th:class="${currentPage != i ? 'page-item':'page-item active' }"
-        th:each="i:${#numbers.sequence(1,totalPages)}">
-          <a th:replace="fragments :: page_link(${i},${i})"></a>
-        </li>
-
-        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
-          <a th:replace="fragments :: page_link(${currentPage+1},'Следующая')"></a>
-        </li>
-
-        <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
-          <a th:replace="fragments :: page_link(${totalPages},'Последняя')"></a>
-        </li>
-
-      </ul>
-    </nav>
-  </div>
 
 
 

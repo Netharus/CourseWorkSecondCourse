@@ -16,6 +16,7 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -54,7 +55,6 @@ public class UserService {
     }
     public void save(User user) {
         boolean isUpdatingUser=(user.getId()!=null);
-
         if(isUpdatingUser){
             User existingUser=userRepo.findById(user.getId()).get();
             if (user.getPassword()==null){
@@ -67,6 +67,12 @@ public class UserService {
             }
         }else{
         encodePassword(user);}
+        userRepo.save(user);
+    }
+    public void createNew(User user){
+        user.setEnabled(true);
+        user.addRole(listRoles().get(1));
+        encodePassword(user);
         userRepo.save(user);
     }
     public void savePassword(User user) {
